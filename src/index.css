@@ -216,12 +216,11 @@ input {
 .choice {
   position: relative;
   display: block;
+  cursor: pointer;
 }
 .choice-input {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
   margin: 0;
   opacity: 0;
   cursor: pointer;
@@ -238,13 +237,12 @@ input {
   transition:
     border-color 0.2s var(--ease),
     background-color 0.2s var(--ease),
-    box-shadow 0.2s var(--ease),
-    transform 0.2s var(--ease);
+    box-shadow 0.2s var(--ease);
 }
-.choice-input:hover + .choice-card {
+/* Hover on the label (not the moving card) so the state can't flicker. */
+.choice:hover .choice-card {
   border-color: var(--border-strong);
   box-shadow: 0 4px 14px -6px rgb(15 23 42 / 0.18);
-  transform: translateY(-1px);
 }
 .choice-input:checked + .choice-card {
   border-color: var(--primary);
@@ -266,12 +264,11 @@ input {
   background: var(--surface-soft);
   border: 1px solid var(--border);
   border-radius: 12px;
-  transition: background 0.2s, transform 0.2s var(--ease);
+  transition: background 0.2s, border-color 0.2s;
 }
 .choice-input:checked + .choice-card .choice-icon {
   background: #fff;
   border-color: rgb(79 70 229 / 0.3);
-  transform: scale(1.05);
 }
 .choice-text {
   display: flex;
@@ -294,7 +291,7 @@ input {
   height: 23px;
   border: 2px solid var(--border-strong);
   background: #fff;
-  transition: all 0.2s var(--ease);
+  transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
 }
 .choice-mark-radio {
   border-radius: 50%;
@@ -306,7 +303,6 @@ input {
   border-color: var(--primary);
   background: var(--primary);
   box-shadow: inset 0 0 0 4px #fff;
-  transform: scale(1.05);
 }
 
 /* ───── Text fields ───── */
@@ -411,7 +407,6 @@ input {
 }
 .btn-primary:hover:not(:disabled) {
   box-shadow: 0 12px 26px -6px rgb(79 70 229 / 0.6), inset 0 1px 0 rgb(255 255 255 / 0.25);
-  transform: translateY(-1px);
   filter: brightness(1.04);
 }
 .btn-secondary {
@@ -423,7 +418,6 @@ input {
 .btn-secondary:hover:not(:disabled) {
   border-color: var(--primary);
   background: var(--primary-soft);
-  transform: translateY(-1px);
 }
 .btn:disabled,
 .btn-link:disabled {
