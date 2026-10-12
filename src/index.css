@@ -1,21 +1,31 @@
 @import "tailwindcss";
 @theme {
-  --font-sans: "Vazirmatn", sans-serif;
+  --font-sans: "Vazirmatn", Tahoma, "Segoe UI", system-ui, sans-serif;
 }
 
+/* Design tokens, tweak these to reskin the whole form. */
 :root {
-  --bg: #f1f5f9;
+  --bg: #f4f6fb;
   --surface: #ffffff;
+  --surface-soft: #f8fafc;
   --text: #0f172a;
-  --muted: #475569;
-  --border: #94a3b8;
-  --border-soft: #e2e8f0;
-  --primary: #1d4ed8;
-  --primary-soft: #eff6ff;
-  --error: #b91c1c;
-  --focus: #1d4ed8;
-  --radius: 12px;
-  font-family: 'Vazirmatn', Tahoma, 'Segoe UI', system-ui, sans-serif;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --primary: #4f46e5;
+  --primary-dark: #4338ca;
+  --primary-soft: #eef2ff;
+  --primary-ghost: #f5f3ff;
+  --error: #dc2626;
+  --error-soft: #fef2f2;
+  --success: #16a34a;
+  --focus: #4f46e5;
+  --radius: 20px;
+  --radius-sm: 14px;
+  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 12px 40px -12px rgb(79 70 229 / 0.18);
+  --shadow-lift: 0 2px 4px rgb(15 23 42 / 0.05), 0 12px 28px -10px rgb(79 70 229 / 0.28);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  font-family: "Vazirmatn", Tahoma, "Segoe UI", system-ui, sans-serif;
 }
 
 *,
@@ -24,12 +34,27 @@
   box-sizing: border-box;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   margin: 0;
-  background: var(--bg);
+  min-height: 100vh;
   color: var(--text);
-  line-height: 1.7;
   font-size: 16px;
+  line-height: 1.9;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  background:
+    radial-gradient(600px 320px at 85% -60px, rgb(79 70 229 / 0.12), transparent 70%),
+    radial-gradient(520px 300px at 10% 0, rgb(14 165 183 / 0.1), transparent 70%),
+    var(--bg);
+  background-attachment: fixed;
+}
+
+::selection {
+  background: rgb(79 70 229 / 0.18);
 }
 
 button,
@@ -49,95 +74,139 @@ input {
   border: 0;
 }
 
-/* ───── چیدمان ───── */
+/* ───── Layout ───── */
 .app {
-  max-width: 640px;
+  max-width: 680px;
   margin: 0 auto;
-  padding: 16px;
+  padding: 28px 16px 56px;
 }
+
+.app-header {
+  text-align: center;
+  margin: 10px 0 22px;
+}
+
+.app-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  background: #fff;
+  border: 1px solid rgb(79 70 229 / 0.22);
+  border-radius: 999px;
+  box-shadow: 0 2px 10px -4px rgb(79 70 229 / 0.35);
+}
+
 .app-header h1 {
-  margin: 8px 0 0;
-  font-size: 1.5rem;
+  margin: 14px 0 4px;
+  font-size: clamp(1.6rem, 4.5vw, 2.1rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.5;
 }
+
 .app-header p {
-  margin: 0 0 16px;
+  margin: 0;
   color: var(--muted);
+  font-size: 0.98rem;
 }
+
 .card {
-  background: var(--surface);
+  background: rgb(255 255 255 / 0.92);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgb(226 232 240 / 0.9);
   border-radius: var(--radius);
-  padding: 16px;
-  box-shadow: 0 1px 3px rgb(15 23 42 / 0.12);
+  padding: 20px;
+  box-shadow: var(--shadow-card);
 }
 @media (min-width: 600px) {
   .card {
-    padding: 28px;
+    padding: 34px 34px 30px;
+  }
+  .app {
+    padding-top: 40px;
   }
 }
 
-/* ───── نوار پیشرفت ───── */
+/* ───── Progress bar ───── */
 .progress {
-  margin-bottom: 24px;
+  margin-bottom: 26px;
 }
 .progress-meta {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   gap: 8px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: var(--muted);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 .progress-label {
-  font-weight: 700;
+  font-weight: 800;
   color: var(--text);
+  background: var(--primary-soft);
+  border: 1px solid rgb(79 70 229 / 0.16);
+  padding: 2px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
 }
 .progress-track {
-  height: 8px;
-  background: var(--border-soft);
+  height: 10px;
+  background: #e8edf5;
   border-radius: 999px;
   overflow: hidden;
+  box-shadow: inset 0 1px 2px rgb(15 23 42 / 0.08);
 }
 .progress-fill {
   height: 100%;
-  background: var(--primary);
+  background: linear-gradient(90deg, #818cf8, var(--primary) 60%, var(--primary-dark));
   border-radius: 999px;
-  transition: width 0.3s ease;
+  transition: width 0.5s var(--ease);
+  box-shadow: 0 0 12px rgb(79 70 229 / 0.5);
 }
 
-/* ───── عنوان‌ها ───── */
+/* ───── Headings ───── */
 .step-title {
   margin: 0 0 4px;
-  font-size: 1.25rem;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  line-height: 1.6;
 }
 .step-title:focus {
   outline: none;
 }
 .step-title:focus-visible {
-  outline: 3px solid var(--focus);
+  outline: 3px solid rgb(79 70 229 / 0.45);
   outline-offset: 4px;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 .step-hint {
-  margin: 0 0 16px;
+  margin: 0 0 20px;
   color: var(--muted);
+  font-size: 0.94rem;
 }
 .group-title {
-  font-weight: 700;
+  font-weight: 800;
   padding: 0;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
+  font-size: 0.98rem;
 }
 
-/* ───── کارت‌های انتخابی ───── */
+/* ───── Choice cards ───── */
 .choice-group {
   border: 0;
   padding: 0;
-  margin: 0 0 20px;
+  margin: 0 0 24px;
   min-width: 0;
 }
 .choice-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 10px;
+  gap: 12px;
 }
 @media (min-width: 600px) {
   .choice-grid {
@@ -161,228 +230,361 @@ input {
   display: flex;
   align-items: center;
   gap: 12px;
-  min-height: 56px;
-  padding: 12px 14px;
-  border: 2px solid var(--border-soft);
-  border-radius: var(--radius);
-  background: var(--surface);
-  transition: border-color 0.15s, background-color 0.15s;
+  min-height: 64px;
+  padding: 13px 15px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  transition:
+    border-color 0.2s var(--ease),
+    background-color 0.2s var(--ease),
+    box-shadow 0.2s var(--ease),
+    transform 0.2s var(--ease);
 }
 .choice-input:hover + .choice-card {
-  border-color: var(--border);
+  border-color: var(--border-strong);
+  box-shadow: 0 4px 14px -6px rgb(15 23 42 / 0.18);
+  transform: translateY(-1px);
 }
 .choice-input:checked + .choice-card {
   border-color: var(--primary);
-  background: var(--primary-soft);
+  background: linear-gradient(180deg, #fff, var(--primary-ghost));
+  box-shadow: 0 0 0 3px rgb(79 70 229 / 0.14), 0 8px 20px -8px rgb(79 70 229 / 0.4);
 }
 .choice-input:focus-visible + .choice-card {
-  outline: 3px solid var(--focus);
+  outline: 3px solid rgb(79 70 229 / 0.4);
   outline-offset: 2px;
 }
 .choice-icon {
-  font-size: 1.5rem;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  font-size: 1.35rem;
   line-height: 1;
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: background 0.2s, transform 0.2s var(--ease);
+}
+.choice-input:checked + .choice-card .choice-icon {
+  background: #fff;
+  border-color: rgb(79 70 229 / 0.3);
+  transform: scale(1.05);
 }
 .choice-text {
   display: flex;
   flex-direction: column;
   flex: 1;
   min-width: 0;
+  line-height: 1.7;
 }
 .choice-label {
-  font-weight: 700;
+  font-weight: 800;
+  font-size: 0.96rem;
 }
 .choice-desc {
-  font-size: 0.875rem;
+  font-size: 0.83rem;
   color: var(--muted);
 }
 .choice-mark {
   flex: none;
-  width: 22px;
-  height: 22px;
-  border: 2px solid var(--border);
-  background: var(--surface);
+  width: 23px;
+  height: 23px;
+  border: 2px solid var(--border-strong);
+  background: #fff;
+  transition: all 0.2s var(--ease);
 }
 .choice-mark-radio {
   border-radius: 50%;
 }
 .choice-mark-checkbox {
-  border-radius: 6px;
+  border-radius: 7px;
 }
 .choice-input:checked + .choice-card .choice-mark {
   border-color: var(--primary);
   background: var(--primary);
-  box-shadow: inset 0 0 0 4px var(--surface);
+  box-shadow: inset 0 0 0 4px #fff;
+  transform: scale(1.05);
 }
 
-/* ───── فیلدهای متنی ───── */
+/* ───── Text fields ───── */
 .field {
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 .field label {
   display: block;
-  font-weight: 700;
-  margin-bottom: 6px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  margin-bottom: 8px;
 }
 .field input {
   width: 100%;
-  min-height: 48px;
-  padding: 10px 12px;
-  font-size: 16px; /* جلوگیری از زوم خودکار iOS */
-  border: 2px solid var(--border);
-  border-radius: 10px;
-  background: var(--surface);
+  min-height: 52px;
+  padding: 12px 16px;
+  font-size: 16px; /* stops iOS auto-zoom */
+  border: 1.5px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface-soft);
   color: var(--text);
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+.field input::placeholder {
+  color: #94a3b8;
+}
+.field input:hover {
+  border-color: #a8b3c7;
+}
+.field input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgb(79 70 229 / 0.15);
 }
 .field input:focus-visible {
-  outline: 3px solid var(--focus);
-  outline-offset: 1px;
+  outline: none;
   border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgb(79 70 229 / 0.18);
 }
-.field input[aria-invalid='true'] {
+.field input[aria-invalid="true"] {
   border-color: var(--error);
+  background: #fff7f7;
+}
+.field input[aria-invalid="true"]:focus {
+  box-shadow: 0 0 0 4px rgb(220 38 38 / 0.13);
 }
 .input-ltr {
   direction: ltr;
   text-align: right;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
 }
 .field-hint {
-  margin: 4px 0 0;
-  font-size: 0.875rem;
+  margin: 6px 0 0;
+  font-size: 0.83rem;
   color: var(--muted);
 }
 .field-error {
-  margin: 6px 0 0;
+  margin: 8px 0 0;
   color: var(--error);
-  font-size: 0.9rem;
+  font-size: 0.87rem;
   font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.field-error::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: 50%;
+  background: currentColor;
 }
 
-/* ───── دکمه‌ها ───── */
+/* ───── Buttons ───── */
 .actions {
   display: flex;
-  gap: 10px;
-  margin-top: 24px;
+  gap: 12px;
+  margin-top: 28px;
 }
 .btn {
   flex: 1;
-  min-height: 48px;
-  padding: 10px 18px;
-  border-radius: 10px;
-  border: 2px solid transparent;
-  font-weight: 700;
+  min-height: 52px;
+  padding: 12px 20px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid transparent;
+  font-weight: 800;
+  font-size: 0.98rem;
   cursor: pointer;
+  transition: transform 0.18s var(--ease), box-shadow 0.2s, background 0.2s, border-color 0.2s;
+}
+.btn:active {
+  transform: scale(0.98);
 }
 .btn-primary {
-  background: var(--primary);
+  background: linear-gradient(135deg, #6366f1, var(--primary) 55%, var(--primary-dark));
   color: #fff;
   flex: 2;
+  box-shadow: 0 8px 20px -6px rgb(79 70 229 / 0.55), inset 0 1px 0 rgb(255 255 255 / 0.25);
+}
+.btn-primary:hover:not(:disabled) {
+  box-shadow: 0 12px 26px -6px rgb(79 70 229 / 0.6), inset 0 1px 0 rgb(255 255 255 / 0.25);
+  transform: translateY(-1px);
+  filter: brightness(1.04);
 }
 .btn-secondary {
-  background: var(--surface);
-  color: var(--primary);
+  background: #fff;
+  color: var(--primary-dark);
+  border-color: rgb(79 70 229 / 0.35);
+  box-shadow: 0 2px 8px -4px rgb(15 23 42 / 0.15);
+}
+.btn-secondary:hover:not(:disabled) {
   border-color: var(--primary);
+  background: var(--primary-soft);
+  transform: translateY(-1px);
 }
 .btn:disabled,
 .btn-link:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
 }
 .btn:focus-visible,
 .btn-link:focus-visible {
-  outline: 3px solid var(--focus);
+  outline: 3px solid rgb(79 70 229 / 0.4);
   outline-offset: 2px;
 }
 .btn-link {
   background: none;
   border: 0;
   color: var(--primary);
-  font-weight: 700;
-  text-decoration: underline;
-  min-height: 44px;
-  padding: 0 8px;
+  font-weight: 800;
+  font-size: 0.88rem;
+  text-decoration: none;
+  border-bottom: 1.5px dashed rgb(79 70 229 / 0.45);
+  border-radius: 4px;
+  min-height: 36px;
+  padding: 2px 8px;
   cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+.btn-link:hover:not(:disabled) {
+  background: var(--primary-soft);
+  color: var(--primary-dark);
 }
 
-/* ───── خلاصه ───── */
+/* ───── Summary ───── */
 .summary {
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 .summary-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--border-soft);
+  padding: 12px 14px;
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.2s;
+}
+.summary-row:hover {
+  border-color: var(--border-strong);
+}
+.summary-text {
+  min-width: 0;
 }
 .summary-text dt {
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   color: var(--muted);
+  font-weight: 500;
 }
 .summary-text dd {
   margin: 0;
-  font-weight: 700;
+  font-weight: 800;
   overflow-wrap: anywhere;
+  line-height: 1.8;
 }
 .summary-ltr {
   text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
-/* ───── بازخورد ───── */
+/* ───── Feedback ───── */
 .feedback {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: 16px 0 0;
-  padding: 12px 14px;
-  border-radius: 10px;
+  margin: 18px 0 0;
+  padding: 13px 15px;
+  border-radius: var(--radius-sm);
+  font-size: 0.92rem;
+  border: 1px solid transparent;
 }
 .feedback-loading {
   background: var(--primary-soft);
-  color: var(--primary);
+  border-color: rgb(79 70 229 / 0.2);
+  color: var(--primary-dark);
 }
 .feedback-error {
-  background: #fef2f2;
+  background: var(--error-soft);
+  border-color: rgb(220 38 38 / 0.22);
   color: var(--error);
   font-weight: 700;
 }
 .spinner {
-  width: 18px;
-  height: 18px;
-  border: 3px solid currentColor;
-  border-top-color: transparent;
+  width: 19px;
+  height: 19px;
+  flex: none;
+  border: 3px solid rgb(79 70 229 / 0.25);
+  border-top-color: var(--primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
 .success {
   text-align: center;
-  padding: 16px 0;
+  padding: 26px 6px 10px;
 }
 .success-icon {
-  width: 64px;
-  height: 64px;
-  margin: 0 auto 12px;
+  width: 76px;
+  height: 76px;
+  margin: 0 auto 16px;
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: #15803d;
+  background: linear-gradient(135deg, #22c55e, #15803d);
   color: #fff;
-  font-size: 2rem;
+  font-size: 2.1rem;
+  box-shadow: 0 14px 30px -8px rgb(22 163 74 / 0.55), inset 0 2px 4px rgb(255 255 255 / 0.35);
+  animation: pop 0.45s var(--ease);
+}
+.success h2 {
+  font-weight: 900;
+}
+.success-code {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  padding: 8px 16px;
+  background: var(--surface-soft);
+  border: 1.5px dashed var(--border-strong);
+  border-radius: 999px;
+  font-size: 0.95rem;
+}
+.success-code strong {
+  font-family: ui-monospace, "SF Mono", Consolas, monospace;
+  letter-spacing: 0.06em;
 }
 
-/* ───── انیمیشن ───── */
+/* ───── Animation ───── */
 .step {
-  animation: step-in 0.25s ease-out;
+  animation: step-in 0.35s var(--ease);
 }
 @keyframes step-in {
   from {
     opacity: 0;
-    transform: translateX(-16px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
     transform: none;
+  }
+}
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 @keyframes spin {
@@ -393,11 +595,13 @@ input {
 
 @media (prefers-reduced-motion: reduce) {
   .step,
-  .spinner {
+  .spinner,
+  .success-icon {
     animation: none;
   }
   .progress-fill,
-  .choice-card {
+  .choice-card,
+  .btn {
     transition: none;
   }
 }

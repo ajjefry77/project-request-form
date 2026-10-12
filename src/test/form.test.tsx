@@ -8,14 +8,15 @@ import { INITIAL_DATA } from '../types/projectRequest';
 
 vi.mock('../services/projectRequestApi', () => ({
   submitProjectRequest: vi.fn(),
-}));
+})); // stub the network layer, no real requests in tests
 
 const mockedSubmit = vi.mocked(submitProjectRequest);
 
+// Helper to keep the tests shorter.
 const clickNext = (user: ReturnType<typeof userEvent.setup>, name = 'مرحله بعد') =>
   user.click(screen.getByRole('button', { name }));
 
-/** مرحله‌های ۱ تا ۳ را پر می‌کند و به فرم تماس می‌رسد. */
+// Walks through steps 0-2 so each test can start at the contact form.
 async function goToContactStep(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole('radio', { name: /مطب یا کلینیک/ }));
   await clickNext(user);
@@ -33,7 +34,7 @@ async function fillContact(user: ReturnType<typeof userEvent.setup>, mobile: str
 
 describe('فرم درخواست پروژه', () => {
   beforeEach(() => {
-    mockedSubmit.mockReset();
+    mockedSubmit.mockReset(); // don't let one test's mock leak into the next
   });
 
   it('بدون انتخاب نوع کسب‌وکار اجازه‌ی ادامه نمی‌دهد و خطا نشان می‌دهد', async () => {
@@ -108,6 +109,7 @@ describe('فرم درخواست پروژه', () => {
   });
 
   it('پیش‌نویس خراب نادیده گرفته می‌شود و فرم از اول شروع می‌شود', () => {
+    // Bad JSON should never crash the form.
     localStorage.setItem(DRAFT_KEY, '{خراب');
     render(<App />);
     expect(screen.getByRole('heading', { name: 'کسب‌وکار شما چه نوعی است؟' })).toBeInTheDocument();

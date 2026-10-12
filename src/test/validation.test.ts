@@ -8,6 +8,7 @@ import {
 } from '../utils/validation';
 import { INITIAL_DATA } from '../types/projectRequest';
 
+// Pure function tests, no rendering needed here.
 describe('تبدیل ارقام', () => {
   it('ارقام فارسی و عربی را به انگلیسی تبدیل می‌کند', () => {
     expect(toEnglishDigits('۰۹۱۲۳۴۵۶۷۸۹')).toBe('09123456789');
@@ -22,6 +23,7 @@ describe('تبدیل ارقام', () => {
 
 describe('اعتبارسنجی موبایل', () => {
   it('شماره‌ی معتبر با ارقام انگلیسی و فارسی را می‌پذیرد', () => {
+    // Both digit systems should pass, normalization handles it.
     expect(validateMobile('09123456789')).toBeNull();
     expect(validateMobile('۰۹۱۲۳۴۵۶۷۸۹')).toBeNull();
   });

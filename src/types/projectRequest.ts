@@ -1,3 +1,5 @@
+// Allowed values for each dropdown/radio group.
+// Kept as unions so a typo fails at compile time.
 export type BusinessType =
   | 'clinic'
   | 'factory'
@@ -12,6 +14,7 @@ export type BudgetRange = 'under10' | '10to30' | '30to100' | 'over100' | 'unknow
 
 export type Timeline = 'urgent' | 'one_to_three' | 'over_three' | 'flexible';
 
+// Everything the form collects, in one place.
 export interface ProjectRequestData {
   businessType: BusinessType | null;
   needs: NeedType[];
@@ -24,7 +27,7 @@ export interface ProjectRequestData {
 export type FieldName = keyof ProjectRequestData;
 export type FormErrors = Partial<Record<FieldName, string>>;
 
-/** ۰ تا ۳ = چهار مرحله‌ی فرم، ۴ = صفحه‌ی خلاصه */
+// Steps 0-3 are the form, 4 is the review screen.
 export type StepNumber = 0 | 1 | 2 | 3 | 4;
 export type SubmitStatus = 'idle' | 'loading' | 'success' | 'error';
 
@@ -34,10 +37,11 @@ export interface FormState {
   errors: FormErrors;
   status: SubmitStatus;
   referenceCode: string | null;
-  /** با هر تلاش ناموفق برای رفتن به مرحله‌ی بعد یکی زیاد می‌شود (برای فوکوس روی اولین خطا) */
+  // Bumped on each failed "next" so App can move focus to the first error.
   attempt: number;
 }
 
+// Generic option used by the card-style radio/checkbox groups.
 export interface Option<T extends string> {
   value: T;
   label: string;
@@ -48,6 +52,7 @@ export interface Option<T extends string> {
 export const TOTAL_STEPS = 4;
 export const SUMMARY_STEP: StepNumber = 4;
 
+// Fresh form, also used when resetting after a successful submit.
 export const INITIAL_DATA: ProjectRequestData = {
   businessType: null,
   needs: [],
@@ -57,6 +62,7 @@ export const INITIAL_DATA: ProjectRequestData = {
   mobile: '',
 };
 
+// Labels shown in the progress bar.
 export const STEP_LABELS: Record<StepNumber, string> = {
   0: 'نوع کسب‌وکار',
   1: 'نیاز پروژه',
@@ -98,5 +104,6 @@ export const TIMELINE_OPTIONS: Option<Timeline>[] = [
 ];
 
 export function labelOf<T extends string>(options: readonly Option<T>[], value: T | null): string {
+  // Falls back to a dash so the summary never renders empty.
   return options.find((o) => o.value === value)?.label ?? '—';
 }

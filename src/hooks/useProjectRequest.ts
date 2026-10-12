@@ -26,10 +26,12 @@ export interface Draft {
   step: StepNumber;
 }
 
+// Guard against bad values coming back from localStorage.
 function isOption<T extends string>(options: readonly Option<T>[], value: unknown): value is T {
   return options.some((o) => o.value === value);
 }
 
+// Rebuilds a safe draft from raw JSON, clamps the step if data is incomplete.
 function sanitizeDraft(raw: unknown): Draft | null {
   if (typeof raw !== 'object' || raw === null) return null;
   const r = raw as Record<string, unknown>;
@@ -57,6 +59,7 @@ function sanitizeDraft(raw: unknown): Draft | null {
   return { data, step };
 }
 
+// Corrupt or missing draft just means starting fresh, no need to throw.
 export function loadDraft(): Draft | null {
   try {
     const raw = localStorage.getItem(DRAFT_KEY);
@@ -70,6 +73,7 @@ function saveDraft(draft: Draft): void {
   try {
     localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
   } catch {
+    // Storage full or private mode, form still works without a draft.
   }
 }
 
@@ -81,6 +85,7 @@ function clearDraft(): void {
 }
 
 
+// All state changes go through here so the flow stays predictable.
 type Action =
   | { type: 'SET_FIELD'; field: FieldName; value: ProjectRequestData[FieldName] }
   | { type: 'TOGGLE_NEED'; need: NeedType }
@@ -107,6 +112,7 @@ export function createInitialState(): FormState {
 export function reducer(state: FormState, action: Action): FormState {
   switch (action.type) {
     case 'SET_FIELD': {
+      // Convert digits right away so validation always sees English numbers.
       const value =
         action.field === 'mobile' ? toEnglishDigits(action.value as string) : action.value;
       const errors = { ...state.errors };
@@ -125,8 +131,10 @@ export function reducer(state: FormState, action: Action): FormState {
       if (current.includes(action.need)) {
         needs = current.filter((n) => n !== action.need);
       } else if (action.need === 'unsure') {
+        // "Not sure" clears everything else, it doesn't make sense combined.
         needs = ['unsure']; 
       } else {
+        // Picking a real need drops "unsure".
         needs = [...current.filter((n) => n !== 'unsure'), action.need];
       }
       const errors = { ...state.errors };
@@ -140,6 +148,7 @@ export function reducer(state: FormState, action: Action): FormState {
       if (Object.keys(errors).length > 0) {
         return { ...state, errors, attempt: state.attempt + 1 };
       }
+      // Trim once on the way out so stored data is already clean.
       const data =
         state.step === 3
           ? {
@@ -157,7 +166,8 @@ export function reducer(state: FormState, action: Action): FormState {
     }
 
     case 'GO_TO': {
-      if (action.step > state.step) return state; // فقط به مرحله‌های قبلی
+      // Summary edit links can only jump back, never skip ahead.
+      if (action.step > state.step) return state;
       return { ...state, errors: {}, status: 'idle', step: action.step };
     }
 
@@ -185,11 +195,12 @@ export function reducer(state: FormState, action: Action): FormState {
   }
 }
 
-/* ───────────── hook ───────────── */
+/* Hook wiring the reducer to localStorage + the mock API. */
 
 export function useProjectRequest() {
   const [state, dispatch] = useReducer(reducer, undefined, createInitialState);
 
+  // Keep the draft in sync, drop it once the request goes through.
   useEffect(() => {
     if (state.status === 'success') {
       clearDraft();
@@ -210,7 +221,7 @@ export function useProjectRequest() {
   const reset = useCallback(() => dispatch({ type: 'RESET' }), []);
 
   const submit = useCallback(async () => {
-    if (state.status === 'loading') return;
+    if (state.status === 'loading') return; // avoid double clicks
     dispatch({ type: 'SUBMIT_START' });
     try {
       const result = await submitProjectRequest(state.data);

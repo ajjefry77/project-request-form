@@ -9,6 +9,7 @@ interface Props {
 }
 
 export function ContactInfoStep({ fullName, mobile, errors, onChange }: Props) {
+  // Hint is always announced, error gets appended when present.
   const mobileDescribedBy = ['mobile-hint', errors.mobile ? 'mobile-error' : null]
     .filter(Boolean)
     .join(' ');

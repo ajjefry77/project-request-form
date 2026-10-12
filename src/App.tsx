@@ -13,6 +13,7 @@ export default function App() {
   const { state, setField, toggleNeed, next, back, goTo, submit, reset } = useProjectRequest();
   const { step, data, errors, status, referenceCode, attempt } = state;
 
+  // Move focus to the step title on step change, helps keyboard/screen reader users.
   const focusKey = `${step}-${status === 'success'}`;
   const lastFocusKey = useRef(focusKey);
   useEffect(() => {
@@ -23,6 +24,7 @@ export default function App() {
 
   const isFirstRender = useRef(true);
   useEffect(() => {
+    // Skip the first mount, there's nothing to announce yet.
     if (isFirstRender.current) {
       isFirstRender.current = false;
       return;
@@ -31,6 +33,7 @@ export default function App() {
   }, [step, status === 'success']);
 
   useEffect(() => {
+    // After a failed next, jump to the first invalid field.
     if (attempt === 0) return;
     document
       .querySelector<HTMLElement>('input[aria-invalid="true"], fieldset[data-invalid="true"] input')
@@ -42,6 +45,7 @@ export default function App() {
     next();
   };
 
+  // Pick which step to show. Summary is handled separately below.
   let content;
   switch (step) {
     case 0:
@@ -84,6 +88,7 @@ export default function App() {
   return (
     <div className="app">
       <header className="app-header">
+        <span className="app-badge">✦ فرم آنلاین</span>
         <h1>درخواست پروژه</h1>
         <p>در چند قدم ساده نیازتان را بگویید.</p>
       </header>

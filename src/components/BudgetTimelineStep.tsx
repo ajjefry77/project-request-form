@@ -22,6 +22,7 @@ export function BudgetTimelineStep({
   onBudgetChange,
   onTimelineChange,
 }: Props) {
+  // Two radio groups on one screen, each with its own error.
   return (
     <>
       <h2 id="step-title" tabIndex={-1} className="step-title">

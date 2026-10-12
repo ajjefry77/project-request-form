@@ -8,6 +8,7 @@ interface Props {
 }
 
 export function BusinessTypeStep({ value, error, onChange }: Props) {
+  // First step, single choice. Title doubles as focus target on step change.
   return (
     <>
       <h2 id="step-title" tabIndex={-1} className="step-title">

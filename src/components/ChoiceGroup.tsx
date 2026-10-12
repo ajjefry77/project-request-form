@@ -1,6 +1,7 @@
 import type { Option } from '../types/projectRequest';
 import { FieldError } from './FormFeedback';
 
+// Props shared by both radio and checkbox variants.
 interface CommonProps<T extends string> {
   name: string;
   legend: string;
@@ -19,9 +20,10 @@ interface CheckboxProps<T extends string> extends CommonProps<T> {
   onChange: (value: T) => void;
 }
 
-/** گروه کارت‌های قابل انتخاب؛ زیرِ کارت‌ها از radio/checkbox واقعی استفاده می‌کند. */
+// Card-style options backed by real inputs, so keyboard + screen readers just work.
 export function ChoiceGroup<T extends string>(props: RadioProps<T> | CheckboxProps<T>) {
   const { name, legend, hideLegend, options, error } = props;
+  // One id so aria-describedby can point the fieldset at its error.
   const errorId = `${name}-error`;
 
   return (
@@ -34,10 +36,12 @@ export function ChoiceGroup<T extends string>(props: RadioProps<T> | CheckboxPro
 
       <div className="choice-grid">
         {options.map((option) => {
+          // Radio compares a single value, checkbox checks the array.
           const checked =
             props.type === 'radio' ? props.value === option.value : props.value.includes(option.value);
 
           return (
+            // Input covers the whole card so the entire card is clickable.
             <label key={option.value} className="choice">
               <input
                 className="choice-input"

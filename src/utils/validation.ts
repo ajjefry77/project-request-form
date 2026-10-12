@@ -1,7 +1,7 @@
 import type { FormErrors, ProjectRequestData, StepNumber } from '../types/projectRequest';
 import { toEnglishDigits } from './persianDigits';
 
-
+// Accepts +98, 0098, 98... or 9... and always returns 09...
 export function normalizeMobile(raw: string): string {
   let v = toEnglishDigits(raw).replace(/[\s\-()‌]/g, '');
   if (v.startsWith('+98')) v = '0' + v.slice(3);
@@ -11,6 +11,7 @@ export function normalizeMobile(raw: string): string {
   return v;
 }
 
+// Returns an error message or null when the number is fine.
 export function validateMobile(raw: string): string | null {
   const m = normalizeMobile(raw);
   if (m === '') return 'شماره موبایل را وارد کنید.';
@@ -20,6 +21,7 @@ export function validateMobile(raw: string): string | null {
   return null;
 }
 
+// Letters in any language plus a few name chars (handles ZWNJ in Persian names).
 const NAME_PATTERN = /^[\p{L}\p{M}\u200c\s.'-]+$/u;
 
 export function validateFullName(raw: string): string | null {
@@ -30,7 +32,7 @@ export function validateFullName(raw: string): string | null {
   return null;
 }
 
-/** خطاهای یک مرحله را برمی‌گرداند. اگر آبجکت خالی باشد، مرحله معتبر است. */
+// Empty object means the step is valid.
 export function validateStep(step: StepNumber, data: ProjectRequestData): FormErrors {
   const errors: FormErrors = {};
 
@@ -61,7 +63,7 @@ export function validateStep(step: StepNumber, data: ProjectRequestData): FormEr
   return errors;
 }
 
-
+// Used when restoring a draft, so we never land past an invalid step.
 export function findFirstInvalidStep(data: ProjectRequestData): StepNumber | null {
   for (const step of [0, 1, 2, 3] as const) {
     if (Object.keys(validateStep(step, data)).length > 0) return step;

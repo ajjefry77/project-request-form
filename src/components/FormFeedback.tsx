@@ -5,9 +5,9 @@ interface FieldErrorProps {
   message?: string;
 }
 
-/** پیام خطای زیر هر فیلد؛ با role=alert توسط صفحه‌خوان اعلام می‌شود. */
+// Inline error under a field, announced via role=alert.
 export function FieldError({ id, message }: FieldErrorProps) {
-  if (!message) return null;
+  if (!message) return null; // nothing to show, keeps DOM clean
   return (
     <p id={id} className="field-error" role="alert">
       {message}
@@ -15,7 +15,7 @@ export function FieldError({ id, message }: FieldErrorProps) {
   );
 }
 
-/** وضعیت ارسال: در حال ارسال یا خطا. */
+// Submit state: spinner while sending, message on failure.
 export function SubmitFeedback({ status }: { status: SubmitStatus }) {
   if (status === 'loading') {
     return (
@@ -41,6 +41,7 @@ interface SuccessMessageProps {
 }
 
 export function SuccessMessage({ referenceCode, onReset }: SuccessMessageProps) {
+  // Final screen after a successful submit.
   return (
     <section className="success" aria-live="polite">
       <div className="success-icon" aria-hidden="true">✓</div>
@@ -49,7 +50,7 @@ export function SuccessMessage({ referenceCode, onReset }: SuccessMessageProps) 
       </h2>
       <p>به‌زودی برای هماهنگی با شما تماس می‌گیریم.</p>
       {referenceCode && (
-        <p>
+        <p className="success-code">
           کد پیگیری: <strong dir="ltr">{referenceCode}</strong>
         </p>
       )}

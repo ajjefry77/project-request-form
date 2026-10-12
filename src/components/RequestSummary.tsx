@@ -27,8 +27,10 @@ interface Row {
 }
 
 export function RequestSummary({ data, status, onEdit, onBack, onSubmit }: Props) {
+  // Join selected needs into one line for the review list.
   const needsText = data.needs.map((n) => labelOf(NEED_OPTIONS, n)).join('، ');
 
+  // Each row knows which step it came from so Edit jumps back there.
   const rows: Row[] = [
     { title: 'نوع کسب‌وکار', step: 0, value: labelOf(BUSINESS_OPTIONS, data.businessType) },
     { title: 'نیاز پروژه', step: 1, value: needsText },
@@ -38,7 +40,7 @@ export function RequestSummary({ data, status, onEdit, onBack, onSubmit }: Props
     { title: 'شماره موبایل', step: 3, value: toPersianDigits(data.mobile), ltr: true },
   ];
 
-  const loading = status === 'loading';
+  const loading = status === 'loading'; // disables buttons while submitting
 
   return (
     <>

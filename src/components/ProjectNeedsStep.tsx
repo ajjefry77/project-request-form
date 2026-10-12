@@ -8,6 +8,7 @@ interface Props {
 }
 
 export function ProjectNeedsStep({ value, error, onToggle }: Props) {
+  // Multi-select step, "not sure" logic lives in the reducer.
   return (
     <>
       <h2 id="step-title" tabIndex={-1} className="step-title">

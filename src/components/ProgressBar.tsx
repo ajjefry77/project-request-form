@@ -2,7 +2,7 @@ import { STEP_LABELS, SUMMARY_STEP, TOTAL_STEPS, type StepNumber } from '../type
 import { toPersianDigits } from '../utils/persianDigits';
 
 export function ProgressBar({ step }: { step: StepNumber }) {
-  // صفحه‌ی خلاصه هم «۴ از ۴» حساب می‌شود (پر شدن کامل نوار)
+  // Review screen counts as step 4 of 4 so the bar shows full.
   const current = step === SUMMARY_STEP ? TOTAL_STEPS : step + 1;
   const label = STEP_LABELS[step];
   const text = `مرحله ${toPersianDigits(current)} از ${toPersianDigits(TOTAL_STEPS)}`;
