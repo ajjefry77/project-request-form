@@ -1,32 +1,18 @@
-# React + TypeScript + Vite
+# فرم درخواست پروژه
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+فرم چندمرحله‌ای RTL برای مشتری غیرفنی، با React + TypeScript + Vite و بدون کتابخانه‌ی فرم.
 
-Currently, two official plugins are available:
+## اجرا
+npm install
+npm run dev        # توسعه
+npm test           # تست‌ها (Vitest)
+npm run build      # ساخت نسخه‌ی نهایی
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+برای دیدن حالت خطای ارسال، آدرس را با `?mock=error` باز کنید.
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
-
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## تصمیم‌های طراحی
+- **یک منبع حقیقت:** کل state در `useReducer` است و کامپوننت‌های مرحله فقط props می‌گیرند. منطق انتقال بین مرحله‌ها در reducer خالص است و بدون رندر تست می‌شود.
+- **اعتبارسنجی جدا از UI:** `utils/validation.ts` توابع خالص دارد. موبایل با ارقام فارسی/عربی، +98 و 0098 پذیرفته و به `09XXXXXXXXX` نرمال می‌شود.
+- **دسترس‌پذیری:** کارت‌ها radio/checkbox واقعی‌اند (کیبورد و صفحه‌خوان بدون کد اضافه)، خطاها با `aria-describedby` و `role="alert"`، فوکوس بعد از هر تغییر مرحله به عنوان آن و بعد از خطا به اولین فیلد خطادار می‌رود.
+- **پیش‌نویس:** در localStorage ذخیره می‌شود، هنگام خواندن اعتبارسنجی می‌شود و بعد از ارسال موفق پاک می‌شود.
+- **حرکت:** انیمیشن ملایم بین مرحله‌ها که با `prefers-reduced-motion` خاموش می‌شود.
