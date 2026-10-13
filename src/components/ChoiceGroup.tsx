@@ -29,6 +29,7 @@ export function ChoiceGroup<T extends string>(props: RadioProps<T> | CheckboxPro
   return (
     <fieldset
       className="choice-group"
+      aria-invalid={error ? true : undefined}
       aria-describedby={error ? errorId : undefined}
       data-invalid={error ? 'true' : undefined}
     >
@@ -50,6 +51,8 @@ export function ChoiceGroup<T extends string>(props: RadioProps<T> | CheckboxPro
                 value={option.value}
                 checked={checked}
                 onChange={() => props.onChange(option.value)}
+                aria-invalid={error ? true : undefined}
+                aria-describedby={error ? errorId : undefined}
               />
               <span className="choice-card">
                 {option.icon && (

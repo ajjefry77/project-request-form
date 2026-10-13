@@ -152,7 +152,7 @@ describe('فرم درخواست پروژه', () => {
   });
 
   it('در صورت خطای ارسال پیام خطا می‌آید و اطلاعات حفظ می‌شود', async () => {
-    mockedSubmit.mockRejectedValue(new Error('network'));
+    mockedSubmit.mockRejectedValueOnce(new Error('network'));
     const user = userEvent.setup();
     render(<App />);
 
@@ -161,8 +161,58 @@ describe('فرم درخواست پروژه', () => {
     await clickNext(user, 'مرور و ارسال');
     await user.click(screen.getByRole('button', { name: 'ارسال درخواست' }));
 
-    expect(await screen.findByText(/ارسال انجام نشد/)).toBeInTheDocument();
+    const alert = await screen.findByRole('alert');
+    expect(alert).toHaveTextContent(/ارسال انجام نشد/);
     expect(screen.getByRole('button', { name: 'تلاش دوباره' })).toBeEnabled();
+    // خلاصه همچنان دیده می‌شود، یعنی اطلاعات از بین نرفته است.
+    expect(screen.getByRole('heading', { name: 'بازبینی و ارسال' })).toBeInTheDocument();
     expect(localStorage.getItem(DRAFT_KEY)).not.toBeNull();
+
+    // تلاش دوباره با موفقیت، به صفحه‌ی موفقیت می‌رسد.
+    mockedSubmit.mockResolvedValueOnce({ referenceCode: 'REQ-RETRY01' });
+    await user.click(screen.getByRole('button', { name: 'تلاش دوباره' }));
+
+    expect(await screen.findByText('REQ-RETRY01')).toBeInTheDocument();
+    expect(localStorage.getItem(DRAFT_KEY)).toBeNull();
+  });
+
+  it('فیلدهای خطادار aria-invalid و aria-describedby دارند تا صفحه‌خوان خطا را بخواند', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    // قدم صفر: گروه رادیویی بدون انتخاب
+    await clickNext(user);
+    const businessError = screen.getByText(/لطفاً نوع کسب‌وکار/);
+    expect(businessError).toHaveAttribute('role', 'alert');
+    expect(businessError).toHaveAttribute('id', 'businessType-error');
+    const businessRadios = screen.getAllByRole('radio');
+    expect(businessRadios.length).toBeGreaterThan(0);
+    for (const radio of businessRadios) {
+      expect(radio).toHaveAttribute('aria-invalid', 'true');
+      expect(radio).toHaveAttribute('aria-describedby', 'businessType-error');
+    }
+
+    // ادامه تا قدم تماس، بعد ارسال خالی برای خطای متنی
+    await user.click(screen.getByRole('radio', { name: /مطب یا کلینیک/ }));
+    await clickNext(user);
+    await user.click(screen.getByRole('checkbox', { name: /وب‌سایت/ }));
+    await clickNext(user);
+    await user.click(screen.getByRole('radio', { name: /۱۰ تا ۳۰ میلیون/ }));
+    await user.click(screen.getByRole('radio', { name: /حدود یک تا سه ماه/ }));
+    await clickNext(user);
+
+    await clickNext(user, 'مرور و ارسال');
+
+    const nameInput = screen.getByLabelText(/نام و نام خانوادگی/);
+    const nameError = screen.getByText(/نام و نام خانوادگی را وارد کنید/);
+    expect(nameError).toHaveAttribute('role', 'alert');
+    expect(nameInput).toHaveAttribute('aria-invalid', 'true');
+    expect(nameInput.getAttribute('aria-describedby')).toContain('fullName-error');
+
+    const mobileInput = screen.getByLabelText(/شماره موبایل/);
+    const mobileError = screen.getByText(/شماره موبایل را وارد کنید/);
+    expect(mobileError).toHaveAttribute('role', 'alert');
+    expect(mobileInput).toHaveAttribute('aria-invalid', 'true');
+    expect(mobileInput.getAttribute('aria-describedby')).toContain('mobile-error');
   });
 });
